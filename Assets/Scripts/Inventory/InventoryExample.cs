@@ -3,80 +3,101 @@ using UnityEngine;
 
 public class InventoryExample : MonoBehaviour
 {
-    [SerializeField] private List<Item> _items;
+    [Header("Options")]
     [SerializeField] private int _itemsCountMax;
+    [SerializeField] private int _numberTakeAtOne;
+    [SerializeField] private int _itemSwordID;
+    [SerializeField] private int _itemShieldID;
 
-    private Item _itemSword = new Item(0, 1);
-    private Item _itemShield = new Item(1, 1);
+    private List<ItemSlot> _itemSlots;
+
+    private ItemSlot _itemSlot;
+    private Item _itemSword;
+    private Item _itemShield;
 
     private InventoryRefactored _inventoryRefactored;
 
+    [Header("Inventory")]
+    [SerializeField] private List<int> _seeItemSlots = new();// для теста
+
     private void Awake()
     {
-        _items = new();
-        _inventoryRefactored = new InventoryRefactored(_items, _itemsCountMax);
+        _itemSword = new Item(_itemSwordID);
+        _itemShield = new Item(_itemShieldID);
+
+        _itemSlots = new();
+
+        for (int i = 0; i < _itemsCountMax; i++)
+        {
+            _itemSlot = new ItemSlot();
+
+            _itemSlots.Add(_itemSlot);
+        }
+
+        _inventoryRefactored = new InventoryRefactored(_itemSlots, _itemsCountMax);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            _inventoryRefactored.Add(_itemSword);
+            _inventoryRefactored.Add(_itemSword, _numberTakeAtOne);
 
-            if (_inventoryRefactored.IsEnoughSpace(_itemSword.Count))
+
+            _seeItemSlots.Clear();
+
+            foreach (ItemSlot slot in _inventoryRefactored.ItemSlots)
             {
-                Debug.Log($" Добавили в инвентарь Меч");
+                if (slot.IsEquipped)
+                    _seeItemSlots.Add(slot.ItemID);
             }
-
-            ToPrintListItemID(_inventoryRefactored.ToSeeExistingItems());
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            List<Item> getItem = _inventoryRefactored.GetItemsBy(0, 1);
+            List<Item> getItem = _inventoryRefactored.GetItemsBy(_itemSword.ID, _numberTakeAtOne);
 
-            if (_inventoryRefactored.HasItem(0))
+
+
+            _seeItemSlots.Clear();
+
+            foreach (ItemSlot slot in _inventoryRefactored.ItemSlots)
             {
-                Debug.Log($" Забрали из инвентаря Меч");
+                if (slot.IsEquipped)
+                    _seeItemSlots.Add(slot.ItemID);
             }
-
-            ToPrintListItemID(_inventoryRefactored.ToSeeExistingItems());
         }
 
         if (Input.GetKeyDown(KeyCode.D))
         {
-            _inventoryRefactored.Add(_itemShield);
+            _inventoryRefactored.Add(_itemShield, _numberTakeAtOne);
 
-            if (_inventoryRefactored.IsEnoughSpace(_itemShield.Count))
+
+
+            _seeItemSlots.Clear();
+
+            foreach (ItemSlot slot in _inventoryRefactored.ItemSlots)
             {
-                Debug.Log($" Добавили в инвентарь Щит");
-            }
+                if (slot.IsEquipped)
+                    _seeItemSlots.Add(slot.ItemID);
 
-            ToPrintListItemID(_inventoryRefactored.ToSeeExistingItems());
+            }
         }
         else if (Input.GetKeyDown(KeyCode.F))
         {
-            List<Item> getItem = _inventoryRefactored.GetItemsBy(1, 1);
-            if (_inventoryRefactored.HasItem(1))
+            List<Item> getItem = _inventoryRefactored.GetItemsBy(_itemShield.ID, _numberTakeAtOne);
+
+
+            _seeItemSlots.Clear();
+
+            foreach (ItemSlot slot in _inventoryRefactored.ItemSlots)
             {
-                Debug.Log($" Забрали из инвентаря Щит");
+                if (slot.IsEquipped)
+                    _seeItemSlots.Add(slot.ItemID);
             }
-
-            ToPrintListItemID(_inventoryRefactored.ToSeeExistingItems());
         }
 
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            Debug.Log($" В инвентаре находится {_inventoryRefactored.CurrentSize.ToString()} кол-во вещей ");
-        }
+        if (Input.GetKeyDown(KeyCode.G))        
+            Debug.Log($" В инвентаре находится {_inventoryRefactored.NumberFilledSlots()} кол-во вещей ");        
     }
-
-    private void ToPrintListItemID(List<int> listItemsID)
-    {
-        foreach (int itemID in listItemsID)
-        {
-            Debug.Log($" В инвентарь содержит айтем с ID{itemID.ToString()}");
-        }
-    }
-
 }
 

@@ -799,7 +799,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9b101d5c462b14caa1002c924957db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _timeMax: 3
+  _itemsCountMax: 6
+  _numberTakeAtOne: 2
+  _itemSwordID: 0
+  _itemShieldID: 1
+  _seeItemSlots: 
 --- !u!1 &2050441375
 GameObject:
   m_ObjectHideFlags: 0
